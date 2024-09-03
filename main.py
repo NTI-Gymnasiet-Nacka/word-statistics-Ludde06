@@ -10,6 +10,7 @@
 # - Längsta och kortaste ordet - om det finns flera, bestäm själv om du skriver ut ett eller flera
 # - Räkna antalet unika ord (alltså ord som bara förekommer en gång)
 
+from collections import Counter
 
 def read_from_file(path: str):
     """Reads a file with the given parameter path and returns the file as a list of strings, split on newline (\n).
@@ -22,10 +23,33 @@ def read_from_file(path: str):
     """
     with open(path, "r" ,encoding="utf-8") as f:
         return f.readlines()
-
-def main():
     
-    sentences = read_from_file("en_resa_genom_svenska_skogen.txt") # Här har du nu en lista av strängar från den inlästa filen.
+def ordnatill(sentences):
+    ord = []
+    for u in sentences:
+        u = u.strip().replace(",", "").replace(".", "").replace("-", "").lower() # Tar bort "-" då det inte är ett ord
+        ord.extend(u.split()) # Extend fungerar som append fast lägger till alla ord induvelt (Vilket gör att det inte blir en lista i en lista) - https://www.geeksforgeeks.org/python-list-extend-method/
+    return ord
+
+def antalord(ord):
+    return len(ord)
+
+def frekventa(ord):
+    u = Counter(ord) # - https://stackabuse.com/count-number-of-word-occurrences-in-list-python/
+    return max(u, key=u.get) # Tar ut ordet som uppkommer felst gånnger
+
+def ordlängd(ord):
+    längd = 0
+    for u in ord:
+        längd += len(u)
+    return f'{längd/antalord(ord):.2f}'
+        
+def main():
+    sentences = read_from_file("en_resa_genom_svenska_skogen.txt")
+    ord = ordnatill(sentences)
+    print(antalord(ord))
+    print(frekventa(ord))
+    print(ordlängd(ord))
 
 if __name__ == "__main__":
     main()
